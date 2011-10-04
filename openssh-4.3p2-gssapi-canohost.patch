@@ -1,0 +1,27 @@
+Symptom: intermittent errors on GSSAPI authentication vs 
+machines on DNS loadbalancer, stupid client message "Generic Error",
+server-side debug complains about unknown principal.
+
+Comes from the fact that we resolve the generic DNS name once for
+the connection, then again for getting the GSSAPI/Kerberos service
+ticket. So the service ticket may be for a different host, if
+the DNS alias switches in between the two resolves.
+--- openssh-4.3p2/sshconnect2.c.gss-canohost	2006-11-28 21:58:03.000000000 +0100
++++ openssh-4.3p2/sshconnect2.c	2006-11-30 11:33:14.000000000 +0100
+@@ -485,6 +485,7 @@
+ 	static u_int mech = 0;
+ 	OM_uint32 min;
+ 	int ok = 0;
++	const char* remotehost = get_canonical_hostname(1);
+ 
+ 	/* Try one GSSAPI method at a time, rather than sending them all at
+ 	 * once. */
+@@ -497,7 +498,7 @@
+ 		/* My DER encoding requires length<128 */
+ 		if (gss_supported->elements[mech].length < 128 &&
+ 		    ssh_gssapi_check_mechanism(&gssctxt, 
+-		    &gss_supported->elements[mech], authctxt->host)) {
++		    &gss_supported->elements[mech], remotehost)) {
+ 			ok = 1; /* Mechanism works */
+ 		} else {
+ 			mech++;

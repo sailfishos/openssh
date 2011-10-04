@@ -1,0 +1,85 @@
+--- openssh-4.7p1/ssh.c.masterrace	2008-03-06 13:55:11.000000000 +0000
++++ openssh-4.7p1/ssh.c	2008-03-06 13:55:19.000000000 +0000
+@@ -1065,7 +1065,7 @@ client_global_request_reply_fwd(int type
+ 	}
+ }
+ 
+-static void
++static int
+ ssh_control_listener(void)
+ {
+ 	struct sockaddr_un addr;
+@@ -1073,10 +1073,11 @@ ssh_control_listener(void)
+ 	int addr_len;
+ 
+ 	if (options.control_path == NULL ||
+-	    options.control_master == SSHCTL_MASTER_NO)
+-		return;
++	    options.control_master == SSHCTL_MASTER_NO ||
++	    control_fd != -1)
++		return 1;
+ 
+-	debug("setting up multiplex master socket");
++	debug("trying to set up multiplex master socket");
+ 
+ 	memset(&addr, '\0', sizeof(addr));
+ 	addr.sun_family = AF_UNIX;
+@@ -1093,11 +1094,9 @@ ssh_control_listener(void)
+ 	old_umask = umask(0177);
+ 	if (bind(control_fd, (struct sockaddr *)&addr, addr_len) == -1) {
+ 		control_fd = -1;
+-		if (errno == EINVAL || errno == EADDRINUSE)
+-			fatal("ControlSocket %s already exists",
+-			    options.control_path);
+-		else
++		if (errno != EINVAL && errno != EADDRINUSE)
+ 			fatal("%s bind(): %s", __func__, strerror(errno));
++		return 0;
+ 	}
+ 	umask(old_umask);
+ 
+@@ -1105,6 +1104,9 @@ ssh_control_listener(void)
+ 		fatal("%s listen(): %s", __func__, strerror(errno));
+ 
+ 	set_nonblock(control_fd);
++
++	debug("control master listening on %s", options.control_path);
++	return 1;
+ }
+ 
+ /* request pty/x11/agent/tcpfwd/shell for channel */
+@@ -1196,7 +1198,9 @@ ssh_session2(void)
+ 	ssh_init_forwarding();
+ 
+ 	/* Start listening for multiplex clients */
+-	ssh_control_listener();
++	if (!ssh_control_listener())
++		fatal("control master socket %s already exists",
++		      options.control_path);
+ 
+  	/*
+  	 * If we are the control master, and if control_persist is set,
+@@ -1375,7 +1379,13 @@ control_client(const char *path)
+ 	switch (options.control_master) {
+ 	case SSHCTL_MASTER_AUTO:
+ 	case SSHCTL_MASTER_AUTO_ASK:
+-		debug("auto-mux: Trying existing master");
++		/* see if we can create a control master socket
++		   to avoid a race between two auto clients */
++		if (mux_command == SSHMUX_COMMAND_OPEN &&
++		    ssh_control_listener())
++			return;
++		debug("trying to connect to control master socket %s",
++		    options.control_path);
+ 		/* FALLTHROUGH */
+ 	case SSHCTL_MASTER_NO:
+ 		break;
+@@ -1522,6 +1532,8 @@ control_client(const char *path)
+ 	signal(SIGTERM, control_client_sighandler);
+ 	signal(SIGWINCH, control_client_sigrelay);
+ 
++	debug("connected to control master; waiting for exit");
++
+ 	if (tty_flag)
+ 		enter_raw_mode();
+ 

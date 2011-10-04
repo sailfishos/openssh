@@ -1,0 +1,15 @@
+--- openssh-4.5p1/ssh.c~	2007-03-24 16:25:18.000000000 +0000
++++ openssh-4.5p1/ssh.c	2007-03-24 16:31:06.000000000 +0000
+@@ -1347,7 +1347,11 @@
+ 		}
+ 		if (errno == ENOENT)
+ 			debug("Control socket \"%.100s\" does not exist", path);
+-		else {
++		else if (errno == ECONNREFUSED) {
++			debug("Control socket connect(%.100s): %s", path,
++			    strerror(errno));
++			unlink(path);
++		} else {
+ 			error("Control socket connect(%.100s): %s", path,
+ 			    strerror(errno));
+ 		}

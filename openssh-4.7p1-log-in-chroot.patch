@@ -1,0 +1,57 @@
+diff -up openssh-4.7p1/sshd.c.log-chroot openssh-4.7p1/sshd.c
+--- openssh-4.7p1/sshd.c.log-chroot	2007-09-06 17:24:13.000000000 +0200
++++ openssh-4.7p1/sshd.c	2007-09-06 17:24:13.000000000 +0200
+@@ -596,6 +596,10 @@ privsep_preauth_child(void)
+ 	/* Demote the private keys to public keys. */
+ 	demote_sensitive_data();
+ 
++	/* Open the syslog permanently so the chrooted process still
++	   can write to syslog. */
++	open_log();
++	
+ 	/* Change our root directory */
+ 	if (chroot(_PATH_PRIVSEP_CHROOT_DIR) == -1)
+ 		fatal("chroot(\"%s\"): %s", _PATH_PRIVSEP_CHROOT_DIR,
+diff -up openssh-4.7p1/log.c.log-chroot openssh-4.7p1/log.c
+--- openssh-4.7p1/log.c.log-chroot	2007-05-20 07:08:16.000000000 +0200
++++ openssh-4.7p1/log.c	2007-09-06 17:29:34.000000000 +0200
+@@ -56,6 +56,7 @@ static LogLevel log_level = SYSLOG_LEVEL
+ static int log_on_stderr = 1;
+ static int log_facility = LOG_AUTH;
+ static char *argv0;
++static int log_fd_keep;
+ 
+ extern char *__progname;
+ 
+@@ -370,10 +371,21 @@ do_log(LogLevel level, const char *fmt, 
+ 		syslog_r(pri, &sdata, "%.500s", fmtbuf);
+ 		closelog_r(&sdata);
+ #else
++	    if (!log_fd_keep) {
+ 		openlog(argv0 ? argv0 : __progname, LOG_PID, log_facility);
++	    }
+ 		syslog(pri, "%.500s", fmtbuf);
++	    if (!log_fd_keep) {
+ 		closelog();
++	    }
+ #endif
+ 	}
+ 	errno = saved_errno;
+ }
++
++void
++open_log(void)
++{
++	openlog(argv0 ? argv0 : __progname, LOG_PID|LOG_NDELAY, log_facility);
++	log_fd_keep = 1;
++}
+diff -up openssh-4.7p1/log.h.log-chroot openssh-4.7p1/log.h
+--- openssh-4.7p1/log.h.log-chroot	2006-08-18 16:32:21.000000000 +0200
++++ openssh-4.7p1/log.h	2007-09-06 17:24:13.000000000 +0200
+@@ -62,4 +62,6 @@ void     debug3(const char *, ...) __att
+ 
+ void	 do_log(LogLevel, const char *, va_list);
+ void	 cleanup_exit(int) __dead;
++
++void     open_log(void);
+ #endif

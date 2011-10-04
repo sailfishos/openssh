@@ -1,0 +1,12 @@
+diff -up openssh-5.6p1/clientloop.c.clientloop openssh-5.6p1/clientloop.c
+--- openssh-5.6p1/clientloop.c.clientloop	2010-11-24 08:18:10.000000000 +0100
++++ openssh-5.6p1/clientloop.c	2010-11-24 08:18:11.000000000 +0100
+@@ -1944,7 +1944,7 @@ client_input_channel_req(int type, u_int
+ 		}
+ 		packet_check_eom();
+ 	}
+-	if (reply) {
++	if (reply && c != NULL) {
+ 		packet_start(success ?
+ 		    SSH2_MSG_CHANNEL_SUCCESS : SSH2_MSG_CHANNEL_FAILURE);
+ 		packet_put_int(c->remote_id);
