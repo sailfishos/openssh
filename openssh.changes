@@ -1,3 +1,6 @@
+* Sat Sep 22 2012 David Greaves <david@dgreaves.com> - 5.6p1
+- Remove GSSIAPI from config files if kerberos disabled in spec file
+
 * Tue Sep 13 2011 Marko Saukko <marko.saukko@cybercom.com> - 5.6p1
 - Added StandardOutput=Socket to sshd@.service file to fix functionality with systemd 35.
 

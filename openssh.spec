@@ -401,6 +401,11 @@ rm -f README.nss.nss-keys
 %if ! %{nss}
 rm -f README.nss
 %endif
+
+%if ! %{kerberos5}
+# If we don't have kerberos, disable mentions of GSSAPI in ssh_config and sshd_config
+sed -i -e's/^\([ \t]*GSSAPI\)/#\1/' $RPM_BUILD_ROOT%{_sysconfdir}/ssh/ssh_config $RPM_BUILD_ROOT%{_sysconfdir}/ssh/sshd_config
+%endif
 %clean
 
 %triggerun server -- ssh-server
