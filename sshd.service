@@ -8,6 +8,7 @@ ExecReload=/bin/kill -HUP $MAINPID
 KillMode=process
 Restart=always
 StandardOutput=syslog
+ExecStartPre=/bin/bash -c 'if [ \( ! -s /etc/ssh/ssh_host_dsa_key \) -a \( ! -s /etc/ssh/ssh_host_dsa_key.pub \) -a \( ! -s /etc/ssh/ssh_host_rsa_key \) -a \( ! -s /etc/ssh/ssh_host_rsa_key.pub \) ]; then /usr/sbin/sshd-hostkeys; fi'
 
 [Install]
 WantedBy=multi-user.target
