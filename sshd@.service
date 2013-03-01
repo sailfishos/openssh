@@ -3,7 +3,8 @@ Description=SSH Per-Connection Server
 After=syslog.target 
 
 [Service]
-ExecStart=-/usr/sbin/sshd -i
+EnvironmentFile=-/etc/ssh/ssh-env.conf
+ExecStart=-/usr/sbin/sshd -i $SSHD_PARAMETERS
 ExecReload=/bin/kill -HUP $MAINPID
 StandardInput=socket
 StandardOutput=socket

@@ -1,3 +1,8 @@
+* Fri Mar 01 2013 Pekka Lundstrom <pekka.lundstrom@jollamobile.com> - 5.6p1
+- sshd config can be different on each installation. Command line parameters
+  are taken from environment file /etc/ssh/ssh-env.conf
+  Fixes MER#681 
+
 * Tue Nov 20 2012 Maciej Blomberg <maciej.blomberg@jollamobile.com> - 5.6p1
 - Sync after keys generation, fixes rare problems mostly reported for vm guests.
 

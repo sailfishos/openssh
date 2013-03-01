@@ -3,7 +3,8 @@ Description=OpenSSH Daemon
 After=syslog.target 
 
 [Service]
-ExecStart=/usr/sbin/sshd -D
+EnvironmentFile=-/etc/ssh/ssh-env.conf
+ExecStart=/usr/sbin/sshd -D $SSHD_PARAMETERS
 ExecReload=/bin/kill -HUP $MAINPID
 KillMode=process
 Restart=always
