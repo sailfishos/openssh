@@ -75,6 +75,8 @@ Source5: sshd@.service
 Source6: sshd.socket
 Source7: sshd-keys.service
 Source8: sshd-hostkeys
+Source9: ssh_config
+Source10: sshd_config
 
 Patch1: openssh-6.7p1-ldap.patch
 
@@ -189,7 +191,7 @@ into and executing commands on a remote machine. This package contains
 an X11 passphrase dialog for OpenSSH.
 
 %prep
-%setup -q -n %{name}-%{version}/%{name}
+%setup -q -n %{name}-%{version}/upstream
 
 %if %{ldap}
 %patch1 -p1 -b .ldap
@@ -340,6 +342,10 @@ rm -f README.nss.nss-keys
 %if ! %{nss}
 rm -f README.nss
 %endif
+
+# Use local config files
+install -m 644 %{SOURCE9} $RPM_BUILD_ROOT%{_sysconfdir}/ssh/
+install -m 600 %{SOURCE10} $RPM_BUILD_ROOT%{_sysconfdir}/ssh/
 
 %if ! %{kerberos5}
 # If we don't have kerberos, disable mentions of GSSAPI in ssh_config and sshd_config
