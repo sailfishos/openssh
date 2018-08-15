@@ -25,9 +25,6 @@
 # Do we want kerberos5 support 
 %define kerberos5 0
 
-# Do we want LDAP support
-%define ldap 0
-
 # Do we want NSS tokens support
 %define nss 1
 
@@ -78,8 +75,6 @@ Source8: sshd-hostkeys
 Source9: ssh_config
 Source10: sshd_config
 
-Patch1: openssh-6.7p1-ldap.patch
-
 License: BSD
 Group: Applications/Internet
 %if %{nologin}
@@ -105,9 +100,6 @@ BuildRequires: autoconf, automake, openssl-devel, perl, zlib-devel
 #BuildRequires: audit-libs-devel
 BuildRequires: util-linux, groff
 BuildRequires: pam-devel
-%if %{ldap}
-BuildRequires: openldap-devel
-%endif
 %if %{kerberos5}
 BuildRequires: krb5-devel
 %endif
@@ -136,13 +128,6 @@ Requires: systemd
 Requires(post): systemd
 Requires(postun): systemd
 Requires(preun): systemd
-
-%if %{ldap}
-%package ldap
-Summary: A LDAP support for open source SSH server daemon
-Requires: openssh = %{version}-%{release}
-Group: System Environment/Daemons
-%endif
 
 %package askpass
 Summary: A passphrase dialog for OpenSSH and X
@@ -179,11 +164,6 @@ the secure shell daemon (sshd). The sshd daemon allows SSH clients to
 securely connect to your SSH server. You also need to have the openssh
 package installed.
 
-%if %{ldap}
-%description ldap
-OpenSSH LDAP backend is a way how to distribute the authorized tokens
-among the servers in the network.
-%endif
 
 %description askpass
 OpenSSH is a free version of SSH (Secure SHell), a program for logging
@@ -192,10 +172,6 @@ an X11 passphrase dialog for OpenSSH.
 
 %prep
 %setup -q -n %{name}-%{version}/upstream
-
-%if %{ldap}
-%patch1 -p1 -b .ldap
-%endif
 
 autoreconf
 
@@ -247,9 +223,6 @@ fi
 %if %{scard}
 	--with-smartcard \
 %endif
-%if %{ldap}
-        --with-ldap \
-%endif
 %if %{rescue}
 	--without-pam \
 %else
@@ -298,7 +271,6 @@ mkdir -p -m755 $RPM_BUILD_ROOT%{_libexecdir}/openssh
 mkdir -p -m755 $RPM_BUILD_ROOT%{_var}/empty/sshd
 
 make install DESTDIR=$RPM_BUILD_ROOT
-rm -f $RPM_BUILD_ROOT%{_sysconfdir}/ssh/ldap.conf
 
 install -d $RPM_BUILD_ROOT/etc/pam.d/
 install -d $RPM_BUILD_ROOT%{_libexecdir}/openssh
@@ -473,15 +445,6 @@ fi
 /%{_lib}/systemd/system/multi-user.target.wants/sshd-keys.service
 /usr/sbin/sshd-hostkeys
 
-%endif
-
-%if %{ldap}
-%files ldap
-%defattr(-,root,root)
-%doc README.lpk lpk-user-example.txt openssh-lpk-openldap.schema openssh-lpk-sun.schema ldap.conf
-%attr(0755,root,root) %{_libexecdir}/openssh/ssh-ldap-helper
-%attr(0644,root,root) %{_mandir}/man8/ssh-ldap-helper.8*
-%attr(0644,root,root) %{_mandir}/man5/ssh-ldap.conf.5*
 %endif
 
 %if ! %{no_gnome_askpass}
