@@ -435,7 +435,7 @@ fi
 %attr(0644,root,root) %{_mandir}/man5/moduli.5*
 %attr(0644,root,root) %{_mandir}/man8/sshd.8*
 %attr(0644,root,root) %{_mandir}/man8/sftp-server.8*
-%attr(0600,root,root) %config(noreplace) %{_sysconfdir}/ssh/sshd_config
+%attr(0600,root,root) %config %{_sysconfdir}/ssh/sshd_config
 %attr(0644,root,root) %config(noreplace) /etc/pam.d/sshd
 /%{_lib}/systemd/system/sshd.service 
 /%{_lib}/systemd/system/sshd.socket
