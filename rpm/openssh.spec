@@ -136,6 +136,21 @@ Requires: openssh = %{version}-%{release}
 Obsoletes: openssh-askpass-gnome
 Provides: openssh-askpass-gnome
 
+%package doc
+Summary: Documentation for %{name}
+Group: Documentation
+Requires: %{name} = %{version}
+
+%package clients-doc
+Summary: Documentation for %{name}-clients
+Group: Documentation
+Requires: %{name}-clients = %{version}
+
+%package server-doc
+Summary: Documentation for %{name}-server
+Group: Documentation
+Requires: %{name}-server = %{version}
+
 %description
 SSH (Secure SHell) is a program for logging into and executing
 commands on a remote machine. SSH is intended to replace rlogin and
@@ -164,11 +179,19 @@ the secure shell daemon (sshd). The sshd daemon allows SSH clients to
 securely connect to your SSH server. You also need to have the openssh
 package installed.
 
-
 %description askpass
 OpenSSH is a free version of SSH (Secure SHell), a program for logging
 into and executing commands on a remote machine. This package contains
 an X11 passphrase dialog for OpenSSH.
+
+%description doc
+Man pages for %{name}.
+
+%description clients-doc
+Man pages for %{name}-clients.
+
+%description server-doc
+Man pages for %{name}-server.
 
 %prep
 %setup -q -n %{name}-%{version}/upstream
@@ -278,6 +301,11 @@ install -m644 %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/sshd
 install -m755 contrib/ssh-copy-id $RPM_BUILD_ROOT%{_bindir}/
 install contrib/ssh-copy-id.1 $RPM_BUILD_ROOT%{_mandir}/man1/
 
+# Move doc files to correct place
+DOCS=$RPM_BUILD_ROOT/%{_docdir}/%{name}-%{version}/
+mkdir -p $DOCS
+install -m 0644 -t $DOCS/ CREDITS INSTALL OVERVIEW README* TODO
+
 # systemd integration
 install -D -m 0644 %{SOURCE4} %{buildroot}/%{_lib}/systemd/system/sshd.service
 install -D -m 0644 %{SOURCE5} %{buildroot}/%{_lib}/systemd/system/sshd@.service
@@ -386,30 +414,32 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc CREDITS INSTALL LICENCE OVERVIEW README* TODO
+%license LICENCE
 %attr(0755,root,root) %dir %{_sysconfdir}/ssh
 %attr(0600,root,root) %config(noreplace) %{_sysconfdir}/ssh/moduli
 
 %if ! %{rescue}
 %attr(0755,root,root) %{_bindir}/ssh-keygen
-%attr(0644,root,root) %{_mandir}/man1/ssh-keygen.1*
 %attr(0755,root,root) %dir %{_libexecdir}/openssh
 %attr(4755,root,root) %{_libexecdir}/openssh/ssh-keysign
-%attr(0644,root,root) %{_mandir}/man8/ssh-keysign.8*
 %endif
 %if %{scard}
 %attr(0755,root,root) %dir %{_datadir}/openssh
 %attr(0644,root,root) %{_datadir}/openssh/Ssh.bin
 %endif
 
+%files doc
+%defattr(0644,root,root)
+%doc %{_docdir}/%{name}-%{version}
+%{_mandir}/man5/moduli.5*
+%{_mandir}/man1/ssh-keygen.1*
+%{_mandir}/man8/ssh-keysign.8*
+
 %files clients
 %defattr(-,root,root)
 %attr(0755,root,root) %{_bindir}/ssh
-%attr(0644,root,root) %{_mandir}/man1/ssh.1*
 %attr(0755,root,root) %{_bindir}/scp
-%attr(0644,root,root) %{_mandir}/man1/scp.1*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/ssh/ssh_config
-%attr(0644,root,root) %{_mandir}/man5/ssh_config.5*
 %if ! %{rescue}
 %attr(2755,root,nobody) %{_bindir}/ssh-agent
 %attr(0755,root,root) %{_bindir}/ssh-add
@@ -417,13 +447,19 @@ fi
 %attr(0755,root,root) %{_bindir}/sftp
 %attr(0755,root,root) %{_bindir}/ssh-copy-id
 %attr(0755,root,root) %{_libexecdir}/openssh/ssh-pkcs11-helper
-%attr(0644,root,root) %{_mandir}/man1/ssh-agent.1*
-%attr(0644,root,root) %{_mandir}/man1/ssh-add.1*
-%attr(0644,root,root) %{_mandir}/man1/ssh-keyscan.1*
-%attr(0644,root,root) %{_mandir}/man1/sftp.1*
-%attr(0644,root,root) %{_mandir}/man1/ssh-copy-id.1*
-%attr(0644,root,root) %{_mandir}/man8/ssh-pkcs11-helper.8*
 %endif
+
+%files clients-doc
+%defattr(0644,root,root)
+%{_mandir}/man1/ssh.1*
+%{_mandir}/man1/scp.1*
+%{_mandir}/man5/ssh_config.5*
+%{_mandir}/man1/ssh-agent.1*
+%{_mandir}/man1/ssh-add.1*
+%{_mandir}/man1/ssh-keyscan.1*
+%{_mandir}/man1/sftp.1*
+%{_mandir}/man1/ssh-copy-id.1*
+%{_mandir}/man8/ssh-pkcs11-helper.8*
 
 %if ! %{rescue}
 %files server
@@ -431,10 +467,6 @@ fi
 %dir %attr(0711,root,root) %{_var}/empty/sshd
 %attr(0755,root,root) %{_sbindir}/sshd
 %attr(0755,root,root) %{_libexecdir}/openssh/sftp-server
-%attr(0644,root,root) %{_mandir}/man5/sshd_config.5*
-%attr(0644,root,root) %{_mandir}/man5/moduli.5*
-%attr(0644,root,root) %{_mandir}/man8/sshd.8*
-%attr(0644,root,root) %{_mandir}/man8/sftp-server.8*
 %attr(0600,root,root) %config(noreplace) %{_sysconfdir}/ssh/sshd_config
 %attr(0644,root,root) %config(noreplace) /etc/pam.d/sshd
 /%{_lib}/systemd/system/sshd.service 
@@ -447,6 +479,12 @@ fi
 
 %endif
 
+%files server-doc
+%defattr(0644,root,root)
+%{_mandir}/man5/sshd_config.5*
+%{_mandir}/man8/sshd.8*
+%{_mandir}/man8/sftp-server.8*
+
 %if ! %{no_gnome_askpass}
 %files askpass
 %defattr(-,root,root)
@@ -454,4 +492,3 @@ fi
 %attr(0755,root,root) %{_libexecdir}/openssh/gnome-ssh-askpass
 %attr(0755,root,root) %{_libexecdir}/openssh/ssh-askpass
 %endif
-
