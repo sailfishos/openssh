@@ -22,6 +22,12 @@ HostKey /etc/ssh/ssh_host_ed25519_key
 # Ciphers and keying
 #RekeyLimit default none
 
+# Cipher chacha20-poly1305@openssh.com causes connection error with openssh
+# compiled with gcc 4.9.4: "message authentication code incorrect".
+# This is probably a compiler/openssh bug but as a workaround drop the
+# chacha cipher from supported list for now (see JB#44920).
+Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-gcm@openssh.com,aes256-gcm@openssh.com
+
 # Logging
 #SyslogFacility AUTH
 #LogLevel INFO
