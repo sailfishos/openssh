@@ -74,6 +74,11 @@ Source7: sshd-keys.service
 Source8: sshd-hostkeys
 Source9: ssh_config
 Source10: sshd_config
+Patch0:  0001-CVE-2018-20685-upstream-disallow-empty-incoming-file.patch
+Patch1:  0002-CVE-2019-6109-0-For-broken-read-readv-comparisons-po.patch
+Patch2:  0003-CVE-2019-6109-1-upstream-Sanitize-scp-filenames-via-.patch
+Patch3:  0004-CVE-2019-6109-2-upstream-Have-progressmeter-force-an.patch
+Patch4:  0005-CVE-2019-6111-upstream-check-in-scp-client-that-file.patch
 
 License: BSD
 Group: Applications/Internet
@@ -195,6 +200,12 @@ Man pages for %{name}-server.
 
 %prep
 %setup -q -n %{name}-%{version}/upstream
+
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
 
 autoreconf
 
