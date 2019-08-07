@@ -25,9 +25,6 @@
 # Do we want kerberos5 support 
 %define kerberos5 0
 
-# Do we want NSS tokens support
-%define nss 1
-
 # Whether or not /sbin/nologin exists.
 %define nologin 1
 
@@ -65,7 +62,6 @@ Version: 8.0p1
 Release: 1%{?rescue_rel}
 URL: http://www.openssh.com/portable.html
 Source0: ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-%{version}.tar.gz
-#Source1: ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-%{version}.tar.gz.asc
 Source2: sshd.pam
 Source4: sshd.service
 Source5: sshd@.service 
@@ -98,7 +94,7 @@ BuildRequires: sharutils
 %endif
 BuildRequires: autoconf, automake, openssl-devel, perl, zlib-devel
 #BuildRequires: audit-libs-devel
-BuildRequires: util-linux, groff
+BuildRequires: util-linux
 BuildRequires: pam-devel
 %if %{kerberos5}
 BuildRequires: krb5-devel
@@ -107,11 +103,6 @@ BuildRequires: krb5-devel
 %if %{libedit}
 BuildRequires: libedit-devel ncurses-devel
 %endif
-
-%if %{nss}
-BuildRequires: nss-devel
-%endif
-
 
 %package clients
 Summary: The OpenSSH client applications
@@ -196,8 +187,6 @@ Man pages for %{name}-server.
 %prep
 %setup -q -n %{name}-%{version}/upstream
 
-autoreconf
-
 %build
 CFLAGS="$RPM_OPT_FLAGS"; export CFLAGS
 %if %{rescue}
@@ -229,20 +218,18 @@ else
 fi
 %endif
 
+autoreconf
+
 %configure \
 	--sysconfdir=%{_sysconfdir}/ssh \
 	--libexecdir=%{_libexecdir}/openssh \
 	--datadir=%{_datadir}/openssh \
-	--with-rsh=%{_bindir}/rsh \
 	--with-default-path=/usr/local/bin:/bin:/usr/bin \
 	--with-superuser-path=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin \
 	--with-privsep-path=%{_var}/empty/sshd \
-	--enable-vendor-patchlevel="FC-%{version}-%{release}" \
 	--disable-strip \
 	--without-zlib-version-check \
-%if %{nss}
-	--with-nss \
-%endif
+	--with-mantype=cat \
 %if %{scard}
 	--with-smartcard \
 %endif
@@ -299,7 +286,6 @@ install -d $RPM_BUILD_ROOT/etc/pam.d/
 install -d $RPM_BUILD_ROOT%{_libexecdir}/openssh
 install -m644 %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/sshd
 install -m755 contrib/ssh-copy-id $RPM_BUILD_ROOT%{_bindir}/
-install contrib/ssh-copy-id.1 $RPM_BUILD_ROOT%{_mandir}/man1/
 
 # Move doc files to correct place
 DOCS=$RPM_BUILD_ROOT/%{_docdir}/%{name}-%{version}/
@@ -339,9 +325,6 @@ rm -f $RPM_BUILD_ROOT/etc/profile.d/gnome-ssh-askpass.*
 perl -pi -e "s|$RPM_BUILD_ROOT||g" $RPM_BUILD_ROOT%{_mandir}/man*/*
 
 rm -f README.nss.nss-keys
-%if ! %{nss}
-rm -f README.nss
-%endif
 
 # Use local config files
 install -m 644 %{SOURCE9} $RPM_BUILD_ROOT%{_sysconfdir}/ssh/
@@ -431,9 +414,6 @@ fi
 %files doc
 %defattr(0644,root,root)
 %doc %{_docdir}/%{name}-%{version}
-%{_mandir}/man5/moduli.5*
-%{_mandir}/man1/ssh-keygen.1*
-%{_mandir}/man8/ssh-keysign.8*
 
 %files clients
 %defattr(-,root,root)
@@ -451,15 +431,6 @@ fi
 
 %files clients-doc
 %defattr(0644,root,root)
-%{_mandir}/man1/ssh.1*
-%{_mandir}/man1/scp.1*
-%{_mandir}/man5/ssh_config.5*
-%{_mandir}/man1/ssh-agent.1*
-%{_mandir}/man1/ssh-add.1*
-%{_mandir}/man1/ssh-keyscan.1*
-%{_mandir}/man1/sftp.1*
-%{_mandir}/man1/ssh-copy-id.1*
-%{_mandir}/man8/ssh-pkcs11-helper.8*
 
 %if ! %{rescue}
 %files server
@@ -481,9 +452,6 @@ fi
 
 %files server-doc
 %defattr(0644,root,root)
-%{_mandir}/man5/sshd_config.5*
-%{_mandir}/man8/sshd.8*
-%{_mandir}/man8/sftp-server.8*
 
 %if ! %{no_gnome_askpass}
 %files askpass
