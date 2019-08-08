@@ -414,6 +414,9 @@ fi
 %files doc
 %defattr(0644,root,root)
 %doc %{_docdir}/%{name}-%{version}
+%{_mandir}/cat5/moduli.5
+%{_mandir}/cat1/ssh-keygen.1
+%{_mandir}/cat8/ssh-keysign.8
 
 %files clients
 %defattr(-,root,root)
@@ -431,6 +434,14 @@ fi
 
 %files clients-doc
 %defattr(0644,root,root)
+%{_mandir}/cat1/ssh.1
+%{_mandir}/cat1/scp.1
+%{_mandir}/cat5/ssh_config.5
+%{_mandir}/cat1/ssh-agent.1
+%{_mandir}/cat1/ssh-add.1
+%{_mandir}/cat1/ssh-keyscan.1
+%{_mandir}/cat1/sftp.1
+%{_mandir}/cat8/ssh-pkcs11-helper.8
 
 %if ! %{rescue}
 %files server
@@ -452,6 +463,9 @@ fi
 
 %files server-doc
 %defattr(0644,root,root)
+%{_mandir}/cat5/sshd_config.5
+%{_mandir}/cat8/sshd.8
+%{_mandir}/cat8/sftp-server.8
 
 %if ! %{no_gnome_askpass}
 %files askpass
