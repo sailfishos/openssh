@@ -399,7 +399,7 @@ fi
 %defattr(-,root,root)
 %license LICENCE
 %attr(0755,root,root) %dir %{_sysconfdir}/ssh
-%attr(0600,root,root) %config(noreplace) %{_sysconfdir}/ssh/moduli
+%attr(0600,root,root) %config %{_sysconfdir}/ssh/moduli
 
 %if ! %{rescue}
 %attr(0755,root,root) %{_bindir}/ssh-keygen
@@ -422,7 +422,7 @@ fi
 %defattr(-,root,root)
 %attr(0755,root,root) %{_bindir}/ssh
 %attr(0755,root,root) %{_bindir}/scp
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/ssh/ssh_config
+%attr(0644,root,root) %config %{_sysconfdir}/ssh/ssh_config
 %if ! %{rescue}
 %attr(2755,root,nobody) %{_bindir}/ssh-agent
 %attr(0755,root,root) %{_bindir}/ssh-add
@@ -449,8 +449,8 @@ fi
 %dir %attr(0711,root,root) %{_var}/empty/sshd
 %attr(0755,root,root) %{_sbindir}/sshd
 %attr(0755,root,root) %{_libexecdir}/openssh/sftp-server
-%attr(0600,root,root) %config(noreplace) %{_sysconfdir}/ssh/sshd_config
-%attr(0644,root,root) %config(noreplace) /etc/pam.d/sshd
+%attr(0600,root,root) %config %{_sysconfdir}/ssh/sshd_config
+%attr(0644,root,root) %config /etc/pam.d/sshd
 /%{_lib}/systemd/system/sshd.service 
 /%{_lib}/systemd/system/sshd.socket
 /%{_lib}/systemd/system/sshd@.service
