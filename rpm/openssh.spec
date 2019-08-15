@@ -293,15 +293,15 @@ mkdir -p $DOCS
 install -m 0644 -t $DOCS/ CREDITS INSTALL OVERVIEW README* TODO
 
 # systemd integration
-install -D -m 0644 %{SOURCE4} %{buildroot}/%{_lib}/systemd/system/sshd.service
-install -D -m 0644 %{SOURCE5} %{buildroot}/%{_lib}/systemd/system/sshd@.service
-install -D -m 0644 %{SOURCE6} %{buildroot}/%{_lib}/systemd/system/sshd.socket
-install -D -m 0644 %{SOURCE7} %{buildroot}/%{_lib}/systemd/system/sshd-keys.service
-mkdir -p %{buildroot}/%{_lib}/systemd/system/multi-user.target.wants
-ln -s ../sshd.socket %{buildroot}/%{_lib}/systemd/system/multi-user.target.wants/sshd.socket
-install -D -m 0755 %{SOURCE8} %{buildroot}/usr/sbin/sshd-hostkeys
-mkdir -p %{buildroot}/%{_lib}/systemd/system/multi-user.target.wants
-ln -s ../sshd-keys.service %{buildroot}/%{_lib}/systemd/system/multi-user.target.wants/sshd-keys.service
+install -D -m 0644 %{SOURCE4} %{buildroot}/%{_libdir}/systemd/system/sshd.service
+install -D -m 0644 %{SOURCE5} %{buildroot}/%{_libdir}/systemd/system/sshd@.service
+install -D -m 0644 %{SOURCE6} %{buildroot}/%{_libdir}/systemd/system/sshd.socket
+install -D -m 0644 %{SOURCE7} %{buildroot}/%{_libdir}/systemd/system/sshd-keys.service
+mkdir -p %{buildroot}/%{_libdir}/systemd/system/multi-user.target.wants
+ln -s ../sshd.socket %{buildroot}/%{_libdir}/systemd/system/multi-user.target.wants/sshd.socket
+install -D -m 0755 %{SOURCE8} %{buildroot}%{_sbindir}/sshd-hostkeys
+mkdir -p %{buildroot}/%{_libdir}/systemd/system/multi-user.target.wants
+ln -s ../sshd-keys.service %{buildroot}/%{_libdir}/systemd/system/multi-user.target.wants/sshd-keys.service
 
 %if ! %{no_gnome_askpass}
 install -s contrib/gnome-ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/openssh/gnome-ssh-askpass
@@ -451,13 +451,13 @@ fi
 %attr(0755,root,root) %{_libexecdir}/openssh/sftp-server
 %attr(0600,root,root) %config(noreplace) %{_sysconfdir}/ssh/sshd_config
 %attr(0644,root,root) %config(noreplace) /etc/pam.d/sshd
-/%{_lib}/systemd/system/sshd.service 
-/%{_lib}/systemd/system/sshd.socket
-/%{_lib}/systemd/system/sshd@.service
-/%{_lib}/systemd/system/sshd-keys.service
-/%{_lib}/systemd/system/multi-user.target.wants/sshd.socket
-/%{_lib}/systemd/system/multi-user.target.wants/sshd-keys.service
-/usr/sbin/sshd-hostkeys
+%{_libdir}/systemd/system/sshd.service 
+%{_libdir}/systemd/system/sshd.socket
+%{_libdir}/systemd/system/sshd@.service
+%{_libdir}/systemd/system/sshd-keys.service
+%{_libdir}/systemd/system/multi-user.target.wants/sshd.socket
+%{_libdir}/systemd/system/multi-user.target.wants/sshd-keys.service
+%{_sbindir}/sshd-hostkeys
 
 %endif
 
