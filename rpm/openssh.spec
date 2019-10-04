@@ -297,8 +297,6 @@ install -D -m 0644 %{SOURCE4} %{buildroot}/%{_lib}/systemd/system/sshd.service
 install -D -m 0644 %{SOURCE5} %{buildroot}/%{_lib}/systemd/system/sshd@.service
 install -D -m 0644 %{SOURCE6} %{buildroot}/%{_lib}/systemd/system/sshd.socket
 install -D -m 0644 %{SOURCE7} %{buildroot}/%{_lib}/systemd/system/sshd-keys.service
-mkdir -p %{buildroot}/%{_lib}/systemd/system/multi-user.target.wants
-ln -s ../sshd.socket %{buildroot}/%{_lib}/systemd/system/multi-user.target.wants/sshd.socket
 install -D -m 0755 %{SOURCE8} %{buildroot}/usr/sbin/sshd-hostkeys
 mkdir -p %{buildroot}/%{_lib}/systemd/system/multi-user.target.wants
 ln -s ../sshd-keys.service %{buildroot}/%{_lib}/systemd/system/multi-user.target.wants/sshd-keys.service
@@ -455,7 +453,6 @@ fi
 /%{_lib}/systemd/system/sshd.socket
 /%{_lib}/systemd/system/sshd@.service
 /%{_lib}/systemd/system/sshd-keys.service
-/%{_lib}/systemd/system/multi-user.target.wants/sshd.socket
 /%{_lib}/systemd/system/multi-user.target.wants/sshd-keys.service
 /usr/sbin/sshd-hostkeys
 
