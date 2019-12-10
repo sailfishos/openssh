@@ -108,6 +108,9 @@ UsePAM yes
 # override default of no subsystems
 Subsystem	sftp	/usr/libexec/openssh/sftp-server
 
+# allow only device owner(s)
+AllowGroups sailfish-system root
+
 # Example of overriding settings on a per-user basis
 #Match User anoncvs
 #	X11Forwarding no
