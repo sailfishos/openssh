@@ -22,6 +22,10 @@ HostKey /etc/ssh/ssh_host_ed25519_key
 # Ciphers and keying
 #RekeyLimit default none
 
+# Disable weak algorithms
+KexAlgorithms -diffie-hellman-group14-sha1
+MACs -hmac-sha1,hmac-sha1-etm@openssh.com
+
 # Logging
 #SyslogFacility AUTH
 #LogLevel INFO
