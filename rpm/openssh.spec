@@ -75,9 +75,9 @@ License: BSD
 Group: Applications/Internet
 %if %{nologin}
 Requires: /sbin/nologin
-Requires: /bin/systemctl
-Requires(preun):  /bin/systemctl
-Requires(postun): /bin/systemctl
+Requires: %{_bindir}/systemctl
+Requires(preun):  %{_bindir}/systemctl
+Requires(postun): %{_bindir}/systemctl
 %endif
 
 %if ! %{no_gnome_askpass}
@@ -96,6 +96,7 @@ BuildRequires: autoconf, automake, openssl-devel, perl, zlib-devel
 #BuildRequires: audit-libs-devel
 BuildRequires: util-linux
 BuildRequires: pam-devel
+BuildRequires: systemd
 %if %{kerberos5}
 BuildRequires: krb5-devel
 %endif
@@ -293,13 +294,13 @@ mkdir -p $DOCS
 install -m 0644 -t $DOCS/ CREDITS INSTALL OVERVIEW README* TODO
 
 # systemd integration
-install -D -m 0644 %{SOURCE4} %{buildroot}/%{_lib}/systemd/system/sshd.service
-install -D -m 0644 %{SOURCE5} %{buildroot}/%{_lib}/systemd/system/sshd@.service
-install -D -m 0644 %{SOURCE6} %{buildroot}/%{_lib}/systemd/system/sshd.socket
-install -D -m 0644 %{SOURCE7} %{buildroot}/%{_lib}/systemd/system/sshd-keys.service
+install -D -m 0644 %{SOURCE4} %{buildroot}/%{_unitdir}/sshd.service
+install -D -m 0644 %{SOURCE5} %{buildroot}/%{_unitdir}/sshd@.service
+install -D -m 0644 %{SOURCE6} %{buildroot}/%{_unitdir}/sshd.socket
+install -D -m 0644 %{SOURCE7} %{buildroot}/%{_unitdir}/sshd-keys.service
 install -D -m 0755 %{SOURCE8} %{buildroot}/usr/sbin/sshd-hostkeys
-mkdir -p %{buildroot}/%{_lib}/systemd/system/multi-user.target.wants
-ln -s ../sshd-keys.service %{buildroot}/%{_lib}/systemd/system/multi-user.target.wants/sshd-keys.service
+mkdir -p %{buildroot}/%{_unitdir}/multi-user.target.wants
+ln -s ../sshd-keys.service %{buildroot}/%{_unitdir}/multi-user.target.wants/sshd-keys.service
 
 %if ! %{no_gnome_askpass}
 install -s contrib/gnome-ssh-askpass $RPM_BUILD_ROOT%{_libexecdir}/openssh/gnome-ssh-askpass
@@ -347,7 +348,7 @@ fi
 # we will fail during upgrade. To overcome that problem, we create 
 # fake service file and remove it when upgrade is over
 
-SSHD_SERVICE="/lib/systemd/system/sshd.service"
+SSHD_SERVICE="${_unitdir}/sshd.service"
 if [ ! -f $SSHD_SERVICE -a -d /usr/libexec/openssh ]; then
     echo "[Unit]" > $SSHD_SERVICE || :
     echo "Description=PLU temp fake" >> $SSHD_SERVICE || :
@@ -365,7 +366,7 @@ systemctl unmask sshd-keygen.service &> /dev/null || :
 
 %posttrans
 # See comment in pre
-SSHD_SERVICE="/lib/systemd/system/sshd.service"
+SSHD_SERVICE="${_unitdir}/sshd.service"
 if grep -q "PLU temp fake" $SSHD_SERVICE; then
     systemctl stop sshd.service &> /dev/null || :
     rm -f $SSHD_SERVICE
@@ -449,11 +450,11 @@ fi
 %attr(0755,root,root) %{_libexecdir}/openssh/sftp-server
 %attr(0600,root,root) %config %{_sysconfdir}/ssh/sshd_config
 %attr(0644,root,root) %config /etc/pam.d/sshd
-/%{_lib}/systemd/system/sshd.service 
-/%{_lib}/systemd/system/sshd.socket
-/%{_lib}/systemd/system/sshd@.service
-/%{_lib}/systemd/system/sshd-keys.service
-/%{_lib}/systemd/system/multi-user.target.wants/sshd-keys.service
+/%{_unitdir}/sshd.service 
+/%{_unitdir}/sshd.socket
+/%{_unitdir}/sshd@.service
+/%{_unitdir}/sshd-keys.service
+/%{_unitdir}/multi-user.target.wants/sshd-keys.service
 /usr/sbin/sshd-hostkeys
 
 %endif
