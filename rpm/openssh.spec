@@ -70,6 +70,7 @@ Source7: sshd-keys.service
 Source8: sshd-hostkeys
 Source9: ssh_config
 Source10: sshd_config
+Source11: load_developer_profile.sh
 
 License: BSD
 Group: Applications/Internet
@@ -329,6 +330,8 @@ rm -f README.nss.nss-keys
 install -m 644 %{SOURCE9} $RPM_BUILD_ROOT%{_sysconfdir}/ssh/
 install -m 600 %{SOURCE10} $RPM_BUILD_ROOT%{_sysconfdir}/ssh/
 
+install -m755 %{SOURCE11} $RPM_BUILD_ROOT%{_libexecdir}/openssh/load_developer_profile
+
 %if ! %{kerberos5}
 # If we don't have kerberos, disable mentions of GSSAPI in ssh_config and sshd_config
 sed -i -e's/^\([ \t]*GSSAPI\)/#\1/' $RPM_BUILD_ROOT%{_sysconfdir}/ssh/ssh_config $RPM_BUILD_ROOT%{_sysconfdir}/ssh/sshd_config
@@ -448,6 +451,7 @@ fi
 %dir %attr(0711,root,root) %{_var}/empty/sshd
 %attr(0755,root,root) %{_sbindir}/sshd
 %attr(0755,root,root) %{_libexecdir}/openssh/sftp-server
+%attr(0755,root,root) %{_libexecdir}/openssh/load_developer_profile
 %attr(0600,root,root) %config %{_sysconfdir}/ssh/sshd_config
 %attr(0644,root,root) %config /etc/pam.d/sshd
 /%{_unitdir}/sshd.service 

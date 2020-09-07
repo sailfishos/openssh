@@ -106,6 +106,9 @@ UsePAM yes
 #ChrootDirectory none
 #VersionAddendum none
 
+# Try to load developer profile
+SetEnv ENV=/usr/libexec/openssh/load_developer_profile
+
 # no default banner path
 #Banner none
 
