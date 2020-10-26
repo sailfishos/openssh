@@ -73,7 +73,6 @@ Source10: sshd_config
 Source11: load_developer_profile.sh
 
 License: BSD
-Group: Applications/Internet
 %if %{nologin}
 Requires: /sbin/nologin
 Requires: %{_bindir}/systemctl
@@ -109,11 +108,9 @@ BuildRequires: libedit-devel ncurses-devel
 %package clients
 Summary: The OpenSSH client applications
 Requires: openssh = %{version}-%{release}
-Group: Applications/Internet
 
 %package server
 Summary: The OpenSSH server daemon
-Group: System/Daemons
 Requires: openssh = %{version}-%{release}
 Requires(pre): /usr/sbin/useradd
 Requires: pam >= 1.0.1-3
@@ -124,24 +121,20 @@ Requires(preun): systemd
 
 %package askpass
 Summary: A passphrase dialog for OpenSSH and X
-Group: Applications/Internet
 Requires: openssh = %{version}-%{release}
 Obsoletes: openssh-askpass-gnome
 Provides: openssh-askpass-gnome
 
 %package doc
 Summary: Documentation for %{name}
-Group: Documentation
 Requires: %{name} = %{version}
 
 %package clients-doc
 Summary: Documentation for %{name}-clients
-Group: Documentation
 Requires: %{name}-clients = %{version}
 
 %package server-doc
 Summary: Documentation for %{name}-server
-Group: Documentation
 Requires: %{name}-server = %{version}
 
 %description
