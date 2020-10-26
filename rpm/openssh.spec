@@ -70,9 +70,9 @@ Source7: sshd-keys.service
 Source8: sshd-hostkeys
 Source9: ssh_config
 Source10: sshd_config
+Source11: load_developer_profile.sh
 
 License: BSD
-Group: Applications/Internet
 %if %{nologin}
 Requires: /sbin/nologin
 Requires: %{_bindir}/systemctl
@@ -108,11 +108,9 @@ BuildRequires: libedit-devel ncurses-devel
 %package clients
 Summary: The OpenSSH client applications
 Requires: openssh = %{version}-%{release}
-Group: Applications/Internet
 
 %package server
 Summary: The OpenSSH server daemon
-Group: System/Daemons
 Requires: openssh = %{version}-%{release}
 Requires(pre): /usr/sbin/useradd
 Requires: pam >= 1.0.1-3
@@ -123,24 +121,20 @@ Requires(preun): systemd
 
 %package askpass
 Summary: A passphrase dialog for OpenSSH and X
-Group: Applications/Internet
 Requires: openssh = %{version}-%{release}
 Obsoletes: openssh-askpass-gnome
 Provides: openssh-askpass-gnome
 
 %package doc
 Summary: Documentation for %{name}
-Group: Documentation
 Requires: %{name} = %{version}
 
 %package clients-doc
 Summary: Documentation for %{name}-clients
-Group: Documentation
 Requires: %{name}-clients = %{version}
 
 %package server-doc
 Summary: Documentation for %{name}-server
-Group: Documentation
 Requires: %{name}-server = %{version}
 
 %description
@@ -329,6 +323,8 @@ rm -f README.nss.nss-keys
 install -m 644 %{SOURCE9} $RPM_BUILD_ROOT%{_sysconfdir}/ssh/
 install -m 600 %{SOURCE10} $RPM_BUILD_ROOT%{_sysconfdir}/ssh/
 
+install -m755 %{SOURCE11} $RPM_BUILD_ROOT%{_libexecdir}/openssh/load_developer_profile
+
 %if ! %{kerberos5}
 # If we don't have kerberos, disable mentions of GSSAPI in ssh_config and sshd_config
 sed -i -e's/^\([ \t]*GSSAPI\)/#\1/' $RPM_BUILD_ROOT%{_sysconfdir}/ssh/ssh_config $RPM_BUILD_ROOT%{_sysconfdir}/ssh/sshd_config
@@ -448,6 +444,7 @@ fi
 %dir %attr(0711,root,root) %{_var}/empty/sshd
 %attr(0755,root,root) %{_sbindir}/sshd
 %attr(0755,root,root) %{_libexecdir}/openssh/sftp-server
+%attr(0755,root,root) %{_libexecdir}/openssh/load_developer_profile
 %attr(0600,root,root) %config %{_sysconfdir}/ssh/sshd_config
 %attr(0644,root,root) %config /etc/pam.d/sshd
 /%{_unitdir}/sshd.service 
