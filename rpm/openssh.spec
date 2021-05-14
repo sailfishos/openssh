@@ -344,7 +344,7 @@ fi
 # we will fail during upgrade. To overcome that problem, we create 
 # fake service file and remove it when upgrade is over
 
-SSHD_SERVICE="${_unitdir}/sshd.service"
+SSHD_SERVICE="%{_unitdir}/sshd.service"
 if [ ! -f $SSHD_SERVICE -a -d /usr/libexec/openssh ]; then
     echo "[Unit]" > $SSHD_SERVICE || :
     echo "Description=PLU temp fake" >> $SSHD_SERVICE || :
@@ -362,7 +362,7 @@ systemctl unmask sshd-keygen.service &> /dev/null || :
 
 %posttrans
 # See comment in pre
-SSHD_SERVICE="${_unitdir}/sshd.service"
+SSHD_SERVICE="%{_unitdir}/sshd.service"
 if grep -q "PLU temp fake" $SSHD_SERVICE; then
     systemctl stop sshd.service &> /dev/null || :
     rm -f $SSHD_SERVICE
