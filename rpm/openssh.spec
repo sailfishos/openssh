@@ -96,7 +96,7 @@ BuildRequires: autoconf, automake, openssl-devel, perl, zlib-devel
 #BuildRequires: audit-libs-devel
 BuildRequires: util-linux
 BuildRequires: pam-devel
-BuildRequires: systemd
+BuildRequires: pkgconfig(systemd)
 %if %{kerberos5}
 BuildRequires: krb5-devel
 %endif
