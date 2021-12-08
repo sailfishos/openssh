@@ -1,3 +1,3 @@
 [submodule "upstream"]
 	path = upstream
-	url = https://git.sailfishos.org/mirror/openssh-portable.git
+	url = https://github.com/sailfishos-mirror/openssh-portable.git
