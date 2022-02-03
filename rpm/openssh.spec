@@ -58,10 +58,10 @@
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2
 Name: openssh
-Version: 8.0p1
+Version: 8.8p1
 Release: 1%{?rescue_rel}
 URL: http://www.openssh.com/portable.html
-Source0: ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-%{version}.tar.gz
+Source0: openssh-%{version}.tar.gz
 Source2: sshd.pam
 Source4: sshd.service
 Source5: sshd@.service 
@@ -122,8 +122,6 @@ Requires(preun): systemd
 %package askpass
 Summary: A passphrase dialog for OpenSSH and X
 Requires: openssh = %{version}-%{release}
-Obsoletes: openssh-askpass-gnome
-Provides: openssh-askpass-gnome
 
 %package doc
 Summary: Documentation for %{name}
@@ -425,6 +423,7 @@ fi
 %attr(0755,root,root) %{_bindir}/sftp
 %attr(0755,root,root) %{_bindir}/ssh-copy-id
 %attr(0755,root,root) %{_libexecdir}/openssh/ssh-pkcs11-helper
+%attr(0755,root,root) %{_libexecdir}/openssh/ssh-sk-helper
 %endif
 
 %files clients-doc
@@ -437,6 +436,7 @@ fi
 %{_mandir}/cat1/ssh-keyscan.1
 %{_mandir}/cat1/sftp.1
 %{_mandir}/cat8/ssh-pkcs11-helper.8
+%{_mandir}/cat8/ssh-sk-helper.8
 
 %if ! %{rescue}
 %files server
