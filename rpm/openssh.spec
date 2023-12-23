@@ -58,7 +58,7 @@
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2
 Name: openssh
-Version: 9.5p1
+Version: 9.6p1
 Release: 1%{?rescue_rel}
 URL: http://www.openssh.com/portable.html
 Source0: openssh-%{version}.tar.gz
