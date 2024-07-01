@@ -58,7 +58,7 @@
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2
 Name: openssh
-Version: 9.6p1
+Version: 9.8p1
 Release: 1%{?rescue_rel}
 URL: http://www.openssh.com/portable.html
 Source0: openssh-%{version}.tar.gz
@@ -389,7 +389,6 @@ systemctl stop sshd.service &> /dev/null || :
 fi
 
 %files
-%defattr(-,root,root)
 %license LICENCE
 %attr(0755,root,root) %dir %{_sysconfdir}/ssh
 %attr(0600,root,root) %config %{_sysconfdir}/ssh/moduli
@@ -412,7 +411,6 @@ fi
 %{_mandir}/cat8/ssh-keysign.8
 
 %files clients
-%defattr(-,root,root)
 %attr(0755,root,root) %{_bindir}/ssh
 %attr(0755,root,root) %{_bindir}/scp
 %attr(0644,root,root) %config %{_sysconfdir}/ssh/ssh_config
@@ -440,10 +438,10 @@ fi
 
 %if ! %{rescue}
 %files server
-%defattr(-,root,root)
 %dir %attr(0711,root,root) %{_var}/empty/sshd
 %attr(0755,root,root) %{_sbindir}/sshd
 %attr(0755,root,root) %{_libexecdir}/openssh/sftp-server
+%attr(0755,root,root) %{_libexecdir}/openssh/sshd-session
 %attr(0755,root,root) %{_libexecdir}/openssh/load_developer_profile
 %attr(0600,root,root) %config %{_sysconfdir}/ssh/sshd_config
 %attr(0644,root,root) %config /etc/pam.d/sshd
@@ -464,7 +462,6 @@ fi
 
 %if ! %{no_gnome_askpass}
 %files askpass
-%defattr(-,root,root)
 %attr(0644,root,root) %{_sysconfdir}/profile.d/gnome-ssh-askpass.*
 %attr(0755,root,root) %{_libexecdir}/openssh/gnome-ssh-askpass
 %attr(0755,root,root) %{_libexecdir}/openssh/ssh-askpass
