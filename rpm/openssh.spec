@@ -58,7 +58,7 @@
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2
 Name: openssh
-Version: 9.8p1
+Version: 9.9p2
 Release: 1%{?rescue_rel}
 URL: http://www.openssh.com/portable.html
 Source0: openssh-%{version}.tar.gz
@@ -404,7 +404,6 @@ fi
 %endif
 
 %files doc
-%defattr(0644,root,root)
 %doc %{_docdir}/%{name}-%{version}
 %{_mandir}/cat5/moduli.5
 %{_mandir}/cat1/ssh-keygen.1
@@ -425,7 +424,6 @@ fi
 %endif
 
 %files clients-doc
-%defattr(0644,root,root)
 %{_mandir}/cat1/ssh.1
 %{_mandir}/cat1/scp.1
 %{_mandir}/cat5/ssh_config.5
@@ -455,7 +453,6 @@ fi
 %endif
 
 %files server-doc
-%defattr(0644,root,root)
 %{_mandir}/cat5/sshd_config.5
 %{_mandir}/cat8/sshd.8
 %{_mandir}/cat8/sftp-server.8
