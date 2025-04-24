@@ -1,0 +1,46 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Pami Ketolainen <pami.ketolainen@jolla.com>
+Date: Fri, 25 Apr 2025 10:26:23 +0300
+Subject: [PATCH] Include time64 syscall numbers not present in old kernel
+ headers
+
+Glibc since v2.31 wraps the clock calls so that 64bit version is called
+first with fall back to 32bit version. The seccomp filter blocks the
+time64 calls as they are not defined in our current kernel headers, and
+that causes things to fail with EACCESS instead of falling back to the
+32bit version.
+
+So define the syscall numbers here until we can update the kernel headers
+to 5.1 or newer.
+---
+ sandbox-seccomp-filter.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/sandbox-seccomp-filter.c b/sandbox-seccomp-filter.c
+index 23b40b6435678666205d1ded69f223f68d73bf6b..93ce9076795302a08cd211fada22fe68a5a80a14 100644
+--- a/sandbox-seccomp-filter.c
++++ b/sandbox-seccomp-filter.c
+@@ -265,6 +265,11 @@ static const struct sock_filter preauth_insns[] = {
+ #ifdef __NR_clock_gettime
+ 	SC_ALLOW(__NR_clock_gettime),
+ #endif
++
++#ifndef __NR_clock_gettime64
++#define __NR_clock_gettime64 403
++#endif
++
+ #ifdef __NR_clock_gettime64
+ 	SC_ALLOW(__NR_clock_gettime64),
+ #endif
+@@ -350,6 +355,11 @@ static const struct sock_filter preauth_insns[] = {
+ #ifdef __NR_clock_nanosleep
+ 	SC_ALLOW(__NR_clock_nanosleep),
+ #endif
++
++#ifndef __NR_clock_nanosleep_time64
++#define __NR_clock_nanosleep_time64 407
++#endif
++
+ #ifdef __NR_clock_nanosleep_time64
+ 	SC_ALLOW(__NR_clock_nanosleep_time64),
+ #endif
