@@ -58,7 +58,7 @@
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2
 Name: openssh
-Version: 9.9p2
+Version: 10.0p2
 Release: 1%{?rescue_rel}
 URL: http://www.openssh.com/portable.html
 Source0: openssh-%{version}.tar.gz
@@ -445,6 +445,7 @@ fi
 %dir %attr(0711,root,root) %{_var}/empty/sshd
 %attr(0755,root,root) %{_sbindir}/sshd
 %attr(0755,root,root) %{_libexecdir}/openssh/sftp-server
+%attr(0755,root,root) %{_libexecdir}/openssh/sshd-auth
 %attr(0755,root,root) %{_libexecdir}/openssh/sshd-session
 %attr(0755,root,root) %{_libexecdir}/openssh/load_developer_profile
 %attr(0600,root,root) %config %{_sysconfdir}/ssh/sshd_config

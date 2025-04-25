@@ -17,7 +17,7 @@ to 5.1 or newer.
  1 file changed, 10 insertions(+)
 
 diff --git a/sandbox-seccomp-filter.c b/sandbox-seccomp-filter.c
-index 23b40b6435678666205d1ded69f223f68d73bf6b..93ce9076795302a08cd211fada22fe68a5a80a14 100644
+index b31062c2b56cc51bb80c75dabc87839b25e9c608..da58b9414504ba2aca7a0fdd0bb506a09d17311b 100644
 --- a/sandbox-seccomp-filter.c
 +++ b/sandbox-seccomp-filter.c
 @@ -265,6 +265,11 @@ static const struct sock_filter preauth_insns[] = {
