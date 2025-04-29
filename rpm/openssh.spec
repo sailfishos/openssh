@@ -72,9 +72,7 @@ Source9: ssh_config
 Source10: sshd_config
 Source11: load_developer_profile.sh
 
-%ifarch %{ix86} %{arm32}
 Patch1: 0001-Include-time64-syscall-numbers-not-present-in-old-ke.patch
-%endif
 
 License: BSD
 %if %{nologin}
@@ -182,7 +180,11 @@ Man pages for %{name}-clients.
 Man pages for %{name}-server.
 
 %prep
-%autosetup -p1 -n %{name}-%{version}/upstream
+%setup -q -n %{name}-%{version}/upstream
+%ifarch %{ix86} %{arm32}
+%patch -p1 -P1
+%endif
+
 
 %build
 CFLAGS="$RPM_OPT_FLAGS"; export CFLAGS
