@@ -95,6 +95,7 @@ BuildRequires: sharutils
 BuildRequires: autoconf, automake, openssl-devel, perl, zlib-devel
 #BuildRequires: audit-libs-devel
 BuildRequires: util-linux
+BuildRequires: pkgconfig(libxcrypt)
 BuildRequires: pam-devel
 BuildRequires: pkgconfig(systemd)
 %if %{kerberos5}
