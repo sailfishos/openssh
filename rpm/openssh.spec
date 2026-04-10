@@ -58,9 +58,9 @@
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2
 Name: openssh
-Version: 10.0p2
+Version: 10.3p1
 Release: 1%{?rescue_rel}
-URL: http://www.openssh.com/portable.html
+URL: https://github.com/sailfishos/openssh
 Source0: openssh-%{version}.tar.gz
 Source2: sshd.pam
 Source4: sshd.service
