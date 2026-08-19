@@ -73,6 +73,7 @@ Source10: sshd_config
 Source11: load_developer_profile.sh
 
 Patch1: 0001-Include-time64-syscall-numbers-not-present-in-old-ke.patch
+Patch2: 0002-Include-statx-syscall-number-not-present-in-old-ker.patch
 
 License: BSD
 %if %{nologin}
@@ -183,6 +184,7 @@ Man pages for %{name}-server.
 %setup -q -n %{name}-%{version}/upstream
 %ifarch %{ix86} %{arm32}
 %patch -p1 -P1
+%patch -p1 -P2
 %endif
 
 

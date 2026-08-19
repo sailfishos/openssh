@@ -1,0 +1,43 @@
+From 864f553636176887ec57cb7a5d57db880658738f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20Szczepaniak?= <m.szczepaniak.000@gmail.com>
+Date: Sat, 15 Aug 2026 18:55:23 +0200
+Subject: [PATCH] Include statx syscall number not present in old kernel
+ headers
+
+glibc's fstat()/stat() family transparently prefers the statx(2)
+syscall when available, falling back to the legacy stat syscalls
+only on ENOSYS. The seccomp filter already has a
+SC_DENY(__NR_statx, EACCES) rule intended to make statx() fail
+gracefully so glibc falls back, but it's guarded by
+"#ifdef __NR_statx", which is not defined by our current kernel
+headers. That silently drops the rule from the filter, so statx()
+instead falls through to the filter's default action
+(SECCOMP_RET_KILL), killing the process outright instead of
+returning EACCES.
+
+This is the same class of problem already fixed for the time64
+syscalls: define the syscall number here until we can update the
+kernel headers to 5.1 or newer.
+---
+ sandbox-seccomp-filter.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/sandbox-seccomp-filter.c b/sandbox-seccomp-filter.c
+index 7b2444930..adb0ae790 100644
+--- a/sandbox-seccomp-filter.c
++++ b/sandbox-seccomp-filter.c
+@@ -282,9 +282,10 @@ static const struct sock_filter preauth_insns[] = {
+ #ifdef __NR_ipc
+ 	SC_DENY(__NR_ipc, EACCES),
+ #endif
+-#ifdef __NR_statx
+-	SC_DENY(__NR_statx, EACCES),
++#ifndef __NR_statx
++#define __NR_statx 397
+ #endif
++	SC_DENY(__NR_statx, EACCES),
+
+ 	/* Syscalls to permit */
+ #ifdef __NR_brk
+--
+2.55.0
