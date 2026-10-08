@@ -17,7 +17,7 @@ to 5.1 or newer.
  1 file changed, 10 insertions(+)
 
 diff --git a/sandbox-seccomp-filter.c b/sandbox-seccomp-filter.c
-index bf753eef22c089bd49e0801abeb12ef81d80b827..27ed31ed20c2498284f007c95888f5265471e6b9 100644
+index f696d50083cb12a68097bc51e7fd2fde35afe517..a3289e7a4d9258f03758c4a6c3f875bb8446dc67 100644
 --- a/sandbox-seccomp-filter.c
 +++ b/sandbox-seccomp-filter.c
 @@ -293,6 +293,11 @@ static const struct sock_filter preauth_insns[] = {
@@ -32,7 +32,7 @@ index bf753eef22c089bd49e0801abeb12ef81d80b827..27ed31ed20c2498284f007c95888f526
  #ifdef __NR_clock_gettime64
  	SC_ALLOW(__NR_clock_gettime64),
  #endif
-@@ -378,6 +383,11 @@ static const struct sock_filter preauth_insns[] = {
+@@ -381,6 +386,11 @@ static const struct sock_filter preauth_insns[] = {
  #ifdef __NR_clock_nanosleep
  	SC_ALLOW(__NR_clock_nanosleep),
  #endif
